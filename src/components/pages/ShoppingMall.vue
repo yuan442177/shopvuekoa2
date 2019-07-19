@@ -32,11 +32,32 @@
         <div class="ad-banner">
             <img v-lazy="adBanner.PICTURE_ADDRESS" width="100%">
         </div>
+        <!--Recommend goods area-->
+        <div class="recommend-area">
+            <div class="recommend-title">
+                商品推荐
+            </div>
+            <div class="recommend-body">
+                <!--swiper-->
+                <swiper :options="swiperOption">
+                    <swiper-slide v-for=" (item ,index) in recommendGoods" :key="index">
+                        <div class="recommend-item">
+                                <img :src="item.image" width="80%" />
+                                <div>{{item.goodsName}}</div>
+                                <div>￥{{item.price}} (￥{{item.mallPrice}})</div>   
+                        </div>
+                    </swiper-slide>
+                </swiper>
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
     import axios from 'axios'
+    import 'swiper/dist/css/swiper.css'
+    import { swiper, swiperSlide } from 'vue-awesome-swiper'
+
     export default {
         data() {
             return {
@@ -44,7 +65,15 @@
             bannerPicArray:[],
             category:[],
             adBanner:[],
+            recommendGoods:[],
+            swiperOption:{
+                slidesPerView:3
             }
+            }
+        },
+        components: {
+                swiper,
+                swiperSlide
         },
         created(){
             axios({
@@ -54,9 +83,10 @@
             .then(response=>{
                 console.log(response)
                 if(response.status==200){
-                this.category=response.data.data.category;
+                this.category=response.data.data.category
                 this.adBanner = response.data.data.advertesPicture //获得广告图片
                 this.bannerPicArray = response.data.data.slides   //轮播图片
+                this.recommendGoods = response.data.data.recommend  //推荐商品
                 }
             })
             .catch(error=>{
@@ -106,4 +136,25 @@
       font-size: 12px;
       text-align: center;
     }
+     .recommend-area{
+       background-color: #fff;
+       margin-top: .3rem;
+    }
+    .recommend-title{
+        border-bottom:1px solid #eee;
+        font-size:14px;
+        padding:.2rem;
+        color:#e5017d;
+    }
+      .recommend-body{
+       border-bottom: 1px solid #eee;
+   }
+  
+    .recommend-item{
+        width:99%;
+        border-right: 1px solid #eee;
+        font-size: 12px;
+        text-align: center;
+    }
+ 
 </style>
